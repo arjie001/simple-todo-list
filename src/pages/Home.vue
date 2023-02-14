@@ -1,11 +1,11 @@
 <script setup>
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted, ref, watch } from 'vue';
 import MyButton from '@/components/MyButton.vue';
 import MyInput from '@/components/MyInput.vue';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
-const local_items = inject('local_items');
+const local_items = inject('local_items'); //access the data from App.vue
 const items = ref({});
 const todo = ref('');
 const edit = ref({
@@ -22,7 +22,7 @@ onMounted(() => {
 const addTodo = () => {
     //add todo list
     items.value.pending.push(todo.value);
-    local_items.value = items.value; //update the local storage values
+
     todo.value = '';
     toast("Todo list Added", {
         autoClose: 1000,
@@ -32,7 +32,7 @@ const addTodo = () => {
 const doneTodo = (index) => {
     items.value.done.push(items.value.pending[index])
     items.value.pending.splice(index, 1);
-    local_items.value = items; //update the local storage values
+
     toast("Todo Completed", {
         autoClose: 1000,
     });
@@ -40,7 +40,7 @@ const doneTodo = (index) => {
 
 const removeTodo = (status, index) => {
     items.value[status].splice(index, 1);
-    local_items.value= items.value; //update the local storage values
+
     toast("Todo Deleted !", {
         autoClose: 1000,
     });
@@ -65,11 +65,19 @@ const saveTodo = () => {
     edit.value.todo = '';
     edit.value.status = null;
     edit.value.index = null;
-    local_items.value = items.value; //update the local storage values
+
     toast("Saved !", {
         autoClose: 1000,
     });
 }
+
+watch(
+  () => items.value,
+  (newValue, oldValue) => {
+    local_items.value = newValue  //update the local storage values
+  },
+  { deep: true }
+)
 </script>
 <template>
     <div class="flex items-center justify-center bg-teal-lightest font-sans">
