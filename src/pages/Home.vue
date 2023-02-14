@@ -47,6 +47,7 @@ const removeTodo = (status, index) => {
 }
 
 const editTodo = (status, index) => {
+    //show the edit input of todo list
     edit.value.todo = items.value[status][index];
     edit.value.index = index;
     edit.value.status = status;
